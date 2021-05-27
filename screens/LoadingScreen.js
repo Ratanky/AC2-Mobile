@@ -17,7 +17,7 @@ class LoadingScreen extends Component {
         firebase.auth().onAuthStateChanged(
             function(user){
                 if(user){
-                    this.props.navigation.navigate('DashboardScreen');
+                    this.props.navigation.navigate('TasksScreen');
                 } else {
                     this.props.navigation.navigate('LoginScreen');
                 }

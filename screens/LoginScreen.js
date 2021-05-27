@@ -74,7 +74,7 @@ class LoginScreen extends Component {
         });
       } else {
         console.log('User already signed-in Firebase.');
-        this.props.navigation.navigate('DashboardScreen');
+        this.props.navigation.navigate('TasksScreen');
       }
     });
   }
