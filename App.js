@@ -11,10 +11,12 @@ import * as firebase from 'firebase';
 import{firebaseConfig} from './config';
 firebase.initializeApp(firebaseConfig);
 
-export default function App() {
-  return (
-    AppNavigator
-  );
+
+
+export default class App extends React.Component {
+  render() {
+    return <AppNavigator />;
+  }
 }
 
 const AppSwitchNavigator = createSwitchNavigator({
