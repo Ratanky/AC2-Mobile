@@ -1,6 +1,7 @@
 export const firebaseConfig = {
     apiKey: "AIzaSyAHNiz3ydCkCAIwGATGOaL4WjwyWEcAu6o",
     authDomain: "ac2-mobile-36d80.firebaseapp.com",
+    databaseURL: 'https://ac2-mobile-36d80-default-rtdb.firebaseio.com',
     projectId: "ac2-mobile-36d80",
     storageBucket: "ac2-mobile-36d80.appspot.com",
     messagingSenderId: "476821295329",

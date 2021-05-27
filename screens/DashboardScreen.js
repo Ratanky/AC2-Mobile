@@ -2,16 +2,20 @@ import React, { Component } from "react";
 import { 
     View,
     Text,
-    StyleSheet
+    StyleSheet,
+    Button
 } from "react-native";
+import * as firebase from 'firebase';
 
 class DashboardScreen extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <Text>DashboardScreen
-                
-                </Text>
+                <Text>DashboardScreen</Text>
+                <Button
+                    title="Sign Out"
+                    onPress={() => firebase.auth().signOut()}//this.props.navigation.navigate('LoginScreen')
+                />
             </View>
         );
     }
