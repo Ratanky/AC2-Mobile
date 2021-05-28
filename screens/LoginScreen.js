@@ -74,7 +74,7 @@ class LoginScreen extends Component {
         });
       } else {
         console.log('User already signed-in Firebase.');
-        this.props.navigation.navigate('TasksScreen');
+        this.props.navigation.navigate('DashboardScreen');
       }
     });
   }
@@ -100,10 +100,13 @@ class LoginScreen extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <Button 
-                    title='Sign In With Google' 
-                    onPress={() => this.signInWithGoogleAsync()}
-                />
+              <Text style={styles.Text}>
+                Greetings App
+              </Text>
+              <Button 
+                  title='Sign In With Google' 
+                  onPress={() => this.signInWithGoogleAsync()}
+              />
             </View>
         );
     }
@@ -115,5 +118,13 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    Text: {
+      flex:0.1,
+        paddingVertical:50,
+        fontSize: 50,
+        color: "#100cdd",
+        fontWeight: "bold", 
+        textAlign: 'center'
     }
 });
