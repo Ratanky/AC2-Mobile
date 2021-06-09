@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "476821295329",
+    "firebase_url": "https://ac2-mobile-36d80-default-rtdb.firebaseio.com",
+    "project_id": "ac2-mobile-36d80",
+    "storage_bucket": "ac2-mobile-36d80.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:476821295329:android:8474547cc045d4a52267a0",
+        "android_client_info": {
+          "package_name": "com.AC2.Mobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "476821295329-3cm92iaqs0o98ufg0mi8q7kgd6mvlf6c.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCf1wfpoiD4pglOjdtkSu3Avrj5ZTjzPuU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "476821295329-3cm92iaqs0o98ufg0mi8q7kgd6mvlf6c.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "476821295329-lrk66ndnvji6b68oh9efj4bt0mq1p2vc.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.AC2-Mobile"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

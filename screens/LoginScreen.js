@@ -101,7 +101,7 @@ class LoginScreen extends Component {
         return (
             <View style={styles.container}>
               <Text style={styles.Text}>
-                Greetings App
+                Task Manager
               </Text>
               <Button 
                   title='Sign In With Google' 
