@@ -8,7 +8,7 @@ import LoginScreen from './screens/LoginScreen';
 import DashboardScreen from './screens/DashboardScreen';
 
 import * as firebase from 'firebase';
-import{firebaseConfig} from './config';
+import{firebaseConfig} from './firebase/config';
 firebase.initializeApp(firebaseConfig);
 
 export default class App extends React.Component {
