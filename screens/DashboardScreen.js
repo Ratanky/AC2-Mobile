@@ -7,88 +7,132 @@ import {
     TextInput,
     TouchableOpacity,
     FlatList,
-    SafeAreaView
+    SafeAreaView,
+    Keyboard,
+    Alert
 } from "react-native";
 import * as firebase from 'firebase';;
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 
 
+var first_run = true;
 
-class DashboardScreen extends Component {
-    constructor() {
-        super();
-    };
-    
-    render(){
+export const DashboardScreen = ({navigation}) => {
+        const [tasks, setTasks] = useState([]);
+        const [newTask, setNewTask] = useState('');
         const user = firebase.auth().currentUser;
         const userName = user.displayName;
         const userUid = user.uid;
-        var tasks;/* = [
-            {id:'0', name: 'task0'},
-            {id:'1', name: 'task1'},
-            {id:'2', name: 'task2'},
-            {id:'3', name: 'task3'},
-            {id:'4', name: 'task4'}
-        ];*/
-        getTasks = () => {
-            console.log(getTasks);
-            firebase
+        var listSize;
+
+        console.log('tasks after rerun: ' + tasks);
+
+        async function getTasks () {
+            await firebase
             .database()
-            .ref().child("users").child(userUid).child("tasks")
+            .ref().child("users").child(firebase.auth().currentUser.uid).child("tasks_size")
             .once("value").then((snapshot) => {
                 if(snapshot.exists()){
-                    console.log(snapshot.val());
-                    tasks = snapshot.val();
-                    console.log(tasks);
+                    listSize = snapshot.val();
+                    console.log('list size init ' + listSize);
                 } else {
-                    console.log('Data not available');
+                    console.log('searching listSize');
                 }
             }).catch((error) => {
                 console.log(error);
             });
-        };
-        getTasks();
-        saveTasks = (tasks) => {
-            tasks.forEach(task => {
+            
+            console.log('list size init ' + listSize);
+            for(var i = 0; i <= listSize; i++){
+                firebase
+                .database()
+                .ref().child("users").child(userUid).child("tasks").child(i)
+                .once("value").then(async function (snapshot) {
+                    if(snapshot.exists()){
+                        const test = snapshot.val();
+                        console.log(test);
+                        await tasks.push(test.name);
+                    } else {
+                        console.log('No tasks');
+                    }
+                }).catch((error) => {
+                    console.log(error);
+                    return;
+                }); 
+            } 
+        }
+        /*if(first_run){
+            console.log('\n\n ======= FIRST RUN ======== \n\n');
+            first_run = false;
+            getTasks();
+        }*/      
+
+        saveTasks = () => {
+            var i;
+            for(i = 0; i<tasks.length; i++){
+                console.log('tasks length: '+ tasks.length);
+                const task = tasks[i];
                 console.log('task:' + task);
-                //if(taskDBContainsTask){
                 firebase
                 .database()
-                .ref('users/' + userUid + '/tasks/')
+                .ref('users/' + userUid + '/tasks/' + i)
                 .update({
-                    name: task.name
+                    name: task
                 });
-                /*} else {
-                    firebase
-                    .database()
-                    .ref('users/' + userUid + '/tasks/')
-                    .update({
-                        name: task.name
-                    });
-                }*/
-            });
-            console.log('Done.2')
-        };
-        var newTaskName;
-        addTasks = () => {
-            console.log(newTaskName);
-            /*firebase
-            .database()
-            .ref('users/' + userUid + '/tasks/')
-            .set({
-                name: newTaskName
-            })*/
-        };
-        removeTasks = (name) => {
-                firebase
+            }
+            listSize = i--;
+            console.log(listSize);
+            firebase
                 .database()
-                .ref('users/' + userUid + '/tasks/')
-                .child(name)
-                .remove();
-
-                tasks = getTasks();
+                .ref('users/' + userUid)
+                .update({
+                    tasks_size: listSize,
+                });
         };
 
+        async function addTasks() {
+            if(newTask === "") return;
+            const search = tasks.filter(tasks => tasks === newTask);
+            if(search != 0){
+                Alert.alert("Atenção!","Tarefa já criada");
+                return;
+            } 
+            await setTasks([...tasks, newTask]);
+            setNewTask('');
+
+            console.log('tasks on Add: ' + tasks);
+            saveTasks();
+            Keyboard.dismiss();
+        };
+        async function removeTasks (name) {
+            console.log('\nname: '+tasks.name);
+            console.log('\nname_index: '+tasks.indexOf(name));
+            Alert.alert(
+                "Deletar",
+                "Tem certeza que deseja apagar?",
+                [
+                    {
+                        text: "Sim",
+                        onPress: () => {
+                            firebase
+                            .database()
+                            .ref().child('users/').child(userUid).child('tasks/').child(tasks.indexOf(name))
+                            .remove();
+                            setTasks(tasks.filter(tasks => tasks != name));
+                        }
+                    },
+                    {
+                        text: "Cancel",
+                        onPress: () => {
+                            return
+                        }
+                    }
+                ],
+                { cancelable : false }
+            )
+            await setTasks([]);
+            saveTasks();
+        };
         return (
             <>
                 <View style={styles.container}>
@@ -100,8 +144,9 @@ class DashboardScreen extends Component {
                             style={styles.input}
                             placeholderTextColor="#999"
                             placeholder="Insert Task Name Here"
-                            onChangeText={(value) => newTaskName}
+                            onChangeText={text => setNewTask(text)}
                             maxLength={40}
+                            value={newTask}
                         />
                         <TouchableOpacity style={styles.touchable} onPress={() => {addTasks()}}>
                             <Ionicons name="add-outline" size={24} color="black" />
@@ -115,8 +160,8 @@ class DashboardScreen extends Component {
                             keyExtractor={item => item}
                             renderItem={({ item }) => (
                                 <View style={styles.containerView}>
-                                    <Text style={styles.Text}> { item.name } </Text>
-                                    <TouchableOpacity onPress={() => removeTasks(item.name)}>
+                                    <Text style={styles.Text}> { item } </Text>
+                                    <TouchableOpacity onPress={() => removeTasks(item)}>
                                         <MaterialIcons
                                             name="delete-forever"
                                             size={25}
@@ -137,9 +182,8 @@ class DashboardScreen extends Component {
                 />
             </>
         );
-    }
 }
-export default DashboardScreen;
+//export default DashboardScreen;
 
 
 
@@ -193,7 +237,7 @@ const styles = StyleSheet.create({
         marginTop:20
     }, 
     containerView:{
-        height:100,
+        height:50,
         width: 375,
         marginBottom: 50,
         borderBottomWidth:1,
@@ -207,7 +251,6 @@ const styles = StyleSheet.create({
     },
     Text: {
         flex:1,
-        textTransform: "capitalize",
-        fontSize: 40
+        fontSize: 25
     }
 });
