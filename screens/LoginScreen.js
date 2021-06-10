@@ -51,15 +51,16 @@ class LoginScreen extends Component {
                 first_name: result.additionalUserInfo.profile.given_name,
                 last_name: result.additionalUserInfo.profile.family_name,
                 created_at: Date.now(),
-                last_time_logged: Date.now()
+                last_time_logged: Date.now(),
+                tasks_size: 0
               });
               console.log('setting done');
           } else {
             firebase
               .database()
-              .ref('/users/' + result.user.uid)
+              .ref('users/' + result.user.uid)
               .update({
-                last_time_logged: Date.now()
+                last_time_logged: Date.now(),
               });
           }
         }).catch((error) => {
@@ -123,7 +124,7 @@ const styles = StyleSheet.create({
       flex:0.1,
         paddingVertical:50,
         fontSize: 50,
-        color: "#100cdd",
+        color: "#232e7a",
         fontWeight: "bold", 
         textAlign: 'center'
     }
