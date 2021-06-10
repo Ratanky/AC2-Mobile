@@ -3,10 +3,12 @@ import {
     View,
     Text,
     StyleSheet,
-    Button
+    Button,
+    LogBox
 } from "react-native";
 import * as firebase from "firebase";
 import * as Google from 'expo-google-app-auth';
+//LogBox.ignoreAllLogs(['Warning: ...'])
 
 class LoginScreen extends Component {
 
@@ -97,7 +99,7 @@ class LoginScreen extends Component {
         return { error: true };
       }
     }
-
+    
     render() {
         return (
             <View style={styles.container}>

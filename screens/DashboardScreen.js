@@ -9,15 +9,16 @@ import {
     FlatList,
     SafeAreaView,
     Keyboard,
-    Alert
+    Alert,
+    LogBox
 } from "react-native";
 import * as firebase from 'firebase';;
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
-
+//LogBox.ignoreAllLogs(['Warning: ...'])
 
 var first_run = true;
 
-export const DashboardScreen = ({navigation}) => {
+export const DashboardScreen = () => {
         const [tasks, setTasks] = useState([]);
         const [newTask, setNewTask] = useState('');
         const user = firebase.auth().currentUser;
@@ -25,7 +26,7 @@ export const DashboardScreen = ({navigation}) => {
         const userUid = user.uid;
         var listSize;
 
-        console.log('tasks after rerun: ' + tasks);
+        //console.log('tasks after rerun: ' + tasks);
 
         async function getTasks () {
             await firebase
@@ -34,15 +35,15 @@ export const DashboardScreen = ({navigation}) => {
             .once("value").then((snapshot) => {
                 if(snapshot.exists()){
                     listSize = snapshot.val();
-                    console.log('list size init ' + listSize);
+                    //console.log('list size init ' + listSize);
                 } else {
-                    console.log('searching listSize');
+                    //console.log('searching listSize');
                 }
             }).catch((error) => {
                 console.log(error);
             });
             
-            console.log('list size init ' + listSize);
+            //console.log('list size init ' + listSize);
             for(var i = 0; i <= listSize; i++){
                 firebase
                 .database()
@@ -50,10 +51,12 @@ export const DashboardScreen = ({navigation}) => {
                 .once("value").then(async function (snapshot) {
                     if(snapshot.exists()){
                         const test = snapshot.val();
-                        console.log(test);
+                        //console.log(test);
                         await tasks.push(test.name);
                     } else {
-                        console.log('No tasks');
+                        //console.log('No tasks');
+                        listSize--;
+                        //console.log(listSize+1);
                     }
                 }).catch((error) => {
                     console.log(error);
@@ -61,11 +64,11 @@ export const DashboardScreen = ({navigation}) => {
                 }); 
             } 
         }
-        /*if(first_run){
+        if(first_run){
             console.log('\n\n ======= FIRST RUN ======== \n\n');
             first_run = false;
             getTasks();
-        }*/      
+        }   
 
         saveTasks = () => {
             var i;
@@ -80,7 +83,7 @@ export const DashboardScreen = ({navigation}) => {
                     name: task
                 });
             }
-            listSize = i--;
+            listSize = i-1;
             console.log(listSize);
             firebase
                 .database()
@@ -99,20 +102,16 @@ export const DashboardScreen = ({navigation}) => {
             } 
             await setTasks([...tasks, newTask]);
             setNewTask('');
-
-            console.log('tasks on Add: ' + tasks);
             saveTasks();
             Keyboard.dismiss();
         };
         async function removeTasks (name) {
-            console.log('\nname: '+tasks.name);
-            console.log('\nname_index: '+tasks.indexOf(name));
             Alert.alert(
-                "Deletar",
-                "Tem certeza que deseja apagar?",
+                "Deletado",
+                "Tarefa apagada com sucesso",
                 [
                     {
-                        text: "Sim",
+                        text: "Ok!",
                         onPress: () => {
                             firebase
                             .database()
@@ -120,17 +119,9 @@ export const DashboardScreen = ({navigation}) => {
                             .remove();
                             setTasks(tasks.filter(tasks => tasks != name));
                         }
-                    },
-                    {
-                        text: "Cancel",
-                        onPress: () => {
-                            return
-                        }
                     }
-                ],
-                { cancelable : false }
+                ],{ cancelable : false }
             )
-            await setTasks([]);
             saveTasks();
         };
         return (
@@ -178,7 +169,10 @@ export const DashboardScreen = ({navigation}) => {
                 <Button
                     style={styles.logoutButton}
                     title="Sign Out"
-                    onPress={() => firebase.auth().signOut()}
+                    onPress={
+                        () => this.saveTasks(),
+                        () => firebase.auth().signOut()
+                    }
                 />
             </>
         );
