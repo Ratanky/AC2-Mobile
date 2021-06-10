@@ -1,14 +1,18 @@
 import React, { Component } from "react";
 import { 
     View,
-    Text,
+    //Text,
     StyleSheet,
-    Button,
+    //Button,
     LogBox
 } from "react-native";
+import {
+  Button,
+  Title
+} from "react-native-paper"
 import * as firebase from "firebase";
 import * as Google from 'expo-google-app-auth';
-//LogBox.ignoreAllLogs(['Warning: ...'])
+LogBox.ignoreAllLogs()
 
 class LoginScreen extends Component {
 
@@ -42,7 +46,6 @@ class LoginScreen extends Component {
         // Sign in with credential from the Google user.
         firebase.auth().signInWithCredential(credential).then(function(result) { 
           console.log('user signed in ');
-          console.log(result)
           if (result.additionalUserInfo.isNewUser){
             console.log('setting');
             firebase
@@ -103,13 +106,16 @@ class LoginScreen extends Component {
     render() {
         return (
             <View style={styles.container}>
-              <Text style={styles.Text}>
+              <Title style={styles.Text}>
                 Task Manager
-              </Text>
+              </Title>
               <Button 
-                  title='Sign In With Google' 
+                  dark="true"
+                  color="#4285F4"
+                  icon={{ uri:"https://img.icons8.com/color/452/google-logo.png" }}
+                  mode="contained"
                   onPress={() => this.signInWithGoogleAsync()}
-              />
+              >Sign In With Google</Button>
             </View>
         );
     }
@@ -126,7 +132,6 @@ const styles = StyleSheet.create({
       flex:0.1,
         paddingVertical:50,
         fontSize: 50,
-        color: "#232e7a",
         fontWeight: "bold", 
         textAlign: 'center'
     }
