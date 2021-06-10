@@ -1,4 +1,4 @@
-import React, { Component, useState, useEffect, useReducer } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { 
     View,
     Text,
@@ -12,11 +12,10 @@ import {
     Alert,
     LogBox
 } from "react-native";
+
 import * as firebase from 'firebase';;
 import { Ionicons, MaterialIcons } from '@expo/vector-icons';
 //LogBox.ignoreAllLogs(['Warning: ...'])
-
-var first_run = true;
 
 export const DashboardScreen = () => {
         const [tasks, setTasks] = useState([]);
@@ -25,8 +24,6 @@ export const DashboardScreen = () => {
         const userName = user.displayName;
         const userUid = user.uid;
         var listSize;
-
-        //console.log('tasks after rerun: ' + tasks);
 
         async function getTasks () {
             await firebase
@@ -64,11 +61,9 @@ export const DashboardScreen = () => {
                 }); 
             } 
         }
-        if(first_run){
-            console.log('\n\n ======= FIRST RUN ======== \n\n');
-            first_run = false;
+        useEffect(() => {
             getTasks();
-        }   
+        },[])
 
         saveTasks = () => {
             var i;
@@ -176,7 +171,7 @@ export const DashboardScreen = () => {
                 />
             </>
         );
-}
+};
 //export default DashboardScreen;
 
 
